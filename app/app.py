@@ -1,16 +1,23 @@
+from tkinter import E
+from tkinter.messagebox import OKCANCEL
 from turtle import title
 from click import style
 import sys, json, requests
 import pandas as pd
-from PyQt6 import QtWidgets, QtGui, QtCore, uic 
+from PyQt6 import QtWidgets, QtGui, QtCore, uic
+from PyQt6.QtWidgets import QMessageBox
 from mainwindow_ui import Ui_MainWindow  # Import the generated UI class
 
 # Create a class that inherits from QMainWindow and the generated UI class
 class MainWindow(QtWidgets.QMainWindow):
+
+    
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.ui = Ui_MainWindow()  # Create an instance of the UI class
         self.ui.setupUi(self)  # Set up the UI in the main window
+        self.setWindowTitle("Trade Manager")
 
         # Connecting the Combobox to manipulate the strategy information text boxes.
         self.ui.comboBox.currentIndexChanged.connect(self.combobox_select_startgey)
@@ -20,7 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.dateTimeEdit.setDateTime(QtCore.QDateTime.currentDateTimeUtc())
         self.ui.dateTimeEdit.setDisplayFormat("dd/MM/yyyy hh:mm:ss")
         self.ui.clearForm.clicked.connect(self.clear_form)
-        
+        self.ui.lineEdit.setProperty("mandatoryField", True)
 
         # Initialise UI elements
         self.target_file_path = self.ui.lineEdit
@@ -140,23 +147,9 @@ class MainWindow(QtWidgets.QMainWindow):
             "Win/Loss": win_loss
             }
         
-        check_data_dict = {
-            self.target_file_path: file_path,
-            
-        }
-        # Check input data in file path for validation errors
-        #check_result = self.check_input_data(data=check_data_dict)
-        # if there are validation errors return none
-        #if check_result:
-         #   return
-        #else:
-            # if validation passes, return file path
+              
         return file_path, data
 
-    # Check validity of input data and visually indicate errors in the UI    
-    def check_input_data(self, data):
-        pass
-    
     # Method to clear the form fields
     def clear_form(self):
         
@@ -178,26 +171,34 @@ class MainWindow(QtWidgets.QMainWindow):
     # Method to submit form data to an excel file
     def submit(self):
         
-
         data = self.get_form_data()
-
             
-
+        # Unpack data taken from get form data function 
         file_path = data[0]
         user_data = data[1]
-
-        df = pd.read_excel(file_path)
-
-        user_df = pd.DataFrame(user_data, index=[0])
-
-        new_df = pd.concat([df, user_df], ignore_index=True)
-
-        new_df.to_excel(file_path, index=False)
-
-        self.clear_form()
-
         
-           
+        # check if file path is empty, if empty raise an error
+        if file_path == "":
+            self.error_box_message()
+            
+        # If file path is valid then export the data
+        else:
+            df = pd.read_excel(file_path)
+            user_df = pd.DataFrame(user_data, index=[0])
+            new_df = pd.concat([df, user_df], ignore_index=True)
+            new_df.to_excel(file_path, index=False)
+            self.export_complete_message()
+            self.clear_form()
+    
+    # Message window appearing when no target file is allocated
+    def error_box_message(self):
+        
+       QMessageBox.information(self, "Information", "Select valid target file.")
+
+    # Message window appearing when export is complete
+    def export_complete_message(self):
+
+        QMessageBox.information(self, "Export Complete", "Data has been exported to target file.")
 
 # Entry point of the application
 if __name__ == "__main__":
