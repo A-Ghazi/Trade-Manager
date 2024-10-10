@@ -1,5 +1,9 @@
+
+from ast import arg
+from math import comb
 from tkinter import E
 from tkinter.messagebox import OKCANCEL
+from tkinter.ttk import Combobox
 from turtle import title
 from click import style
 import sys, json, requests
@@ -7,8 +11,9 @@ import pandas as pd
 from PyQt6 import QtWidgets, QtGui, QtCore, uic
 from PyQt6.QtWidgets import QMessageBox
 from mainwindow_ui import Ui_MainWindow  # Import the generated UI class
+from dialog_ui import Ui_Dialog
 
-# Create a class that inherits from QMainWindow and the generated UI class
+# class that inherits from QMainWindow and the generated UI class
 class MainWindow(QtWidgets.QMainWindow):
 
     
@@ -20,7 +25,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("Trade Manager")
 
         # Connecting the Combobox to manipulate the strategy information text boxes.
-        self.ui.comboBox.currentIndexChanged.connect(self.combobox_select_startgey)
+        self.ui.comboBox.currentIndexChanged.connect(self.update_text_fields)
+        self.ui.actionInsert_Strategies.triggered.connect(self.open_dialog)
         self.ui.selectFile.clicked.connect(self.get_file_path)
         self.ui.exportData.clicked.connect(self.submit)
         self.ui.clearForm.clicked.connect(self.clear_form)
@@ -29,7 +35,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.clearForm.clicked.connect(self.clear_form)
         self.ui.lineEdit.setProperty("mandatoryField", True)
 
-        # Initialise UI elements
+        # Initialise UI elements from MainWindow
         self.target_file_path = self.ui.lineEdit
         self.select_folder_btn = self.ui.selectFile
         self.export_data_btn = self.ui.exportData
@@ -49,46 +55,43 @@ class MainWindow(QtWidgets.QMainWindow):
         self.p_l = self.ui.doubleSpinBox_5
         self.win_loss = self.ui.comboBox_4
 
+        # A dictionary to store stratgy data
+        self.combo_data = {}
 
-    # Define a function to handle button clicks
-    def combobox_select_startgey(self, index):
-        match index:
-            case 0:
-                self.ui.textEdit.setText("")
-                self.ui.plainTextEdit.setPlainText("")
-                self.ui.plainTextEdit_2.setPlainText("")
-                self.ui.plainTextEdit_3.setPlainText("")
-                self.ui.plainTextEdit_4.setPlainText("")
-            case 1:
-                self.ui.textEdit.setText("Volume Accumulation Setup is based on price rotation in a consolidated area, price is then driven higher or lower from the accumulation area. Once the Price has returned to this area a trade Long/Short can be taken.")
-                self.ui.plainTextEdit.setPlainText("Price is in Rotation for a period of time, then Price id driver higher or lower. PUSH MUST BE SIGNIFICANT.")
-                self.ui.plainTextEdit_2.setPlainText("Identify the heaviest volume in the accumulation phase using Volume Profile.")
-                self.ui.plainTextEdit_3.setPlainText("Wait for price to retrace back into the area with heavy volume.")
-                self.ui.plainTextEdit_4.setPlainText("Enter trade based on bias.")
-            case 2:
-                self.ui.textEdit.setText("Volume Trend Setup is based on a thin volume profile, based on the trend if price retraces to a significant volume area this allows for a trend continuation trade.")
-                self.ui.plainTextEdit.setPlainText("Volume profile is usually thin due to heavy directional push.")
-                self.ui.plainTextEdit_2.setPlainText("Volume profile will show volume clusters where price has enabled institutions to accumulate orders")
-                self.ui.plainTextEdit_3.setPlainText("Trend must continue past the volume clusters.")
-                self.ui.plainTextEdit_4.setPlainText("With trend setup highlight the heaviest volume cluster and wait for price to tap into the area to enter a trend continuation trade.")
-            case 3:
-                self.ui.textEdit.setText("Volume Rejection Setup is based on a very strong reaction in the market to to either news catalyst or an old strong high or low. This will create a rejection in one direction which can later be used to take a trade in the same direction of the rejection.")
-                self.ui.plainTextEdit.setPlainText("Find strong rejection in either direciton.")
-                self.ui.plainTextEdit_2.setPlainText("Sudden reversal after the rejection.")
-                self.ui.plainTextEdit_3.setPlainText("Price returns to the rejection zone.")
-                self.ui.plainTextEdit_4.setPlainText("Enter long or short around the heavy volume clusters.")
-            case 4:
-                self.ui.textEdit.setText("Volume Reversal Setup is based on price pushing past support or resistance levels, for this strategy price must push past these levels with heavy volume.")
-                self.ui.plainTextEdit.setPlainText("Wait for price to push a past support or resistance level.")
-                self.ui.plainTextEdit_2.setPlainText("Wait for price to return to the original support or resistance level.")
-                self.ui.plainTextEdit_3.setPlainText("Take a reversal trade based on this setup.")
-                self.ui.plainTextEdit_4.setPlainText("NOTE: THIS SETUP USUALLY HAPPENS WHEN YOU HAVE A REJECTION SETUP TRADE.")
-            case 5:
-                self.ui.textEdit.setText("Volume PD POC Setup is based on previous day POC where price usually makes a reaction to this level if it returns to it.")
-                self.ui.plainTextEdit.setPlainText("Today's price must be significantlly higher or lower than PD POC level.")
-                self.ui.plainTextEdit_2.setPlainText("Wait for price to return to this level.")
-                self.ui.plainTextEdit_3.setPlainText("Take a trade where you're expecting price will reject at the POC level.")
-                self.ui.plainTextEdit_4.setPlainText("NOTE: THIS TRADE USUALLY WORKS HOWEVER MARKETS CAN PUSH PAST THIS LEVEL AND NOT RESPECT IT.")
+        
+    # Fucntion which will open up the strategy input dialog window
+    def open_dialog(self):
+        dialog = DialogWindow(self)
+        dialog.dialog_submitted.connect(self.add_combo_option)
+        dialog.exec()
+
+    # 
+    def add_combo_option(self, combo_option, text_data):
+        #Take the combo_option name received from Dialog window and to QComboBox 
+        self.ui.comboBox.addItem(combo_option)
+        # Take the combo_option as a key and add the text_data as values - text_data is a list containing all the strategy information
+        self.combo_data[combo_option] = text_data
+
+    # Updating stratgey fields based on combobox selection
+    def update_text_fields(self):
+
+        current_option = self.ui.comboBox.currentText()
+
+        if current_option in self.combo_data:
+            data = self.combo_data[current_option]
+            self.ui.textEdit.setPlainText(data[0])  # Set the first QTextEdit
+            self.ui.plainTextEdit.setPlainText(data[1])  # Set the second QTextEdit
+            self.ui.plainTextEdit_2.setPlainText(data[2])  # Set the third QTextEdit
+            self.ui.plainTextEdit_3.setPlainText(data[3])  # Set the fourth QTextEdit
+            self.ui.plainTextEdit_4.setPlainText(data[4])  # Set the fifth QTextEdit
+        else:
+            # Clear all text fields if no data is found
+            self.ui.textEdit.clear()
+            self.ui.plainTextEdit.clear()
+            self.ui.plainTextEdit_2.clear()
+            self.ui.plainTextEdit_3.clear()
+            self.ui.plainTextEdit_4.clear()
+        
 
     # Open a file dialog to get the path of an excel file
     def get_file_path(self):
@@ -200,6 +203,36 @@ class MainWindow(QtWidgets.QMainWindow):
 
         QMessageBox.information(self, "Export Complete", "Data has been exported to target file.")
 
+# Class for dialog
+class DialogWindow(QtWidgets.QDialog):
+
+    dialog_submitted = QtCore.pyqtSignal(str, list)
+
+    def __init__(self, parent=None):
+        super(DialogWindow, self).__init__(parent)
+        self.ui = Ui_Dialog()
+        self.ui.setupUi(self)
+        
+        # Connect Dialog Buttons
+        self.ui.buttonBox.accepted.connect(self.load_strategy_data)
+        # Initialise UI elements
+   
+
+    def load_strategy_data(self):
+        
+        combo_option = self.ui.strategyNameEdit.toPlainText()
+
+        text_data = [
+            self.ui.strategyOverviewEdit.toPlainText(),
+            self.ui.strategySetup1.toPlainText(),
+            self.ui.strategySetup2.toPlainText(),
+            self.ui.strategySetup3.toPlainText(),
+            self.ui.strategySetup4.toPlainText()
+        ]
+
+        self.dialog_submitted.emit(combo_option, text_data)
+        self.accept()
+
 # Entry point of the application
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # Create the application object
@@ -209,7 +242,3 @@ if __name__ == "__main__":
     sys.exit(app.exec())  # Start the application's event loop
 
 
-# ADD EXAMPLE BUTTON FOR EACH STRATEGY TO SHOW AN EXAMPLE OF HOW THE TRADE SHOULD LOOK. 
-# GET THE EXPORT TO EXCEL TO WORK BY ONLY EXPORTING ONE ITEM
-# ALLOW USER TO ENTER AND REMOVE NEW STRATGIES 
-# MAKE THE RESET BUTTON WORK BY RESETING ALL FIELDS

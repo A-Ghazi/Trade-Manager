@@ -82,31 +82,6 @@
              <string>Select</string>
             </property>
            </item>
-           <item>
-            <property name="text">
-             <string>Volume Accumulation Setup</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Volume Trend Setup</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Volume Rejection Setup</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Volume Reversal Setup</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Volume PD POC Setup</string>
-            </property>
-           </item>
           </widget>
          </item>
         </layout>
@@ -347,22 +322,6 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QDateTimeEdit" name="dateTimeEdit">
-         <property name="font">
-          <font>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="minimumDate">
-          <date>
-           <year>2020</year>
-           <month>9</month>
-           <day>1</day>
-          </date>
-         </property>
-        </widget>
-       </item>
        <item row="1" column="0">
         <widget class="QLabel" name="label_5">
          <property name="font">
@@ -375,6 +334,18 @@
          </property>
          <property name="buddy">
           <cstring>comboBox_2</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="maximum">
+          <double>999999.989999999990687</double>
          </property>
         </widget>
        </item>
@@ -407,18 +378,132 @@
          </item>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_11">
+       <item row="4" column="1">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="value">
+          <double>1.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="prefix">
+          <string/>
+         </property>
+         <property name="maximum">
+          <double>9999.989999999999782</double>
+         </property>
+         <property name="value">
+          <double>2000.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="label_12">
          <property name="font">
           <font>
            <bold>false</bold>
           </font>
          </property>
          <property name="text">
-          <string>Long/Short</string>
+          <string>Initial Investment</string>
          </property>
          <property name="buddy">
-          <cstring>comboBox_3</cstring>
+          <cstring>doubleSpinBox_4</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QComboBox" name="comboBox_4">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
+         <item>
+          <property name="text">
+           <string>Win</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Loss</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Breakeven</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Win/Loss/Breakeven</string>
+         </property>
+         <property name="buddy">
+          <cstring>comboBox_4</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Exit Price</string>
+         </property>
+         <property name="buddy">
+          <cstring>doubleSpinBox_3</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_6">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Entry Price</string>
+         </property>
+         <property name="buddy">
+          <cstring>doubleSpinBox</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_7">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="text">
+          <string>Position Size</string>
+         </property>
+         <property name="buddy">
+          <cstring>doubleSpinBox_2</cstring>
          </property>
         </widget>
        </item>
@@ -441,108 +526,18 @@
          </item>
         </widget>
        </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_6">
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_11">
          <property name="font">
           <font>
            <bold>false</bold>
           </font>
          </property>
          <property name="text">
-          <string>Entry Price</string>
+          <string>Long/Short</string>
          </property>
          <property name="buddy">
-          <cstring>doubleSpinBox</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox">
-         <property name="font">
-          <font>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="prefix">
-          <string/>
-         </property>
-         <property name="maximum">
-          <double>9999.989999999999782</double>
-         </property>
-         <property name="value">
-          <double>2000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_7">
-         <property name="font">
-          <font>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Position Size</string>
-         </property>
-         <property name="buddy">
-          <cstring>doubleSpinBox_2</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
-         <property name="font">
-          <font>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="value">
-          <double>1.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="label_8">
-         <property name="font">
-          <font>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Exit Price</string>
-         </property>
-         <property name="buddy">
-          <cstring>doubleSpinBox_3</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
-         <property name="font">
-          <font>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="maximum">
-          <double>9999.989999999999782</double>
-         </property>
-         <property name="value">
-          <double>2000.000000000000000</double>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QLabel" name="label_12">
-         <property name="font">
-          <font>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Initial Investment</string>
-         </property>
-         <property name="buddy">
-          <cstring>doubleSpinBox_4</cstring>
+          <cstring>comboBox_3</cstring>
          </property>
         </widget>
        </item>
@@ -570,55 +565,35 @@
          </property>
         </widget>
        </item>
-       <item row="7" column="1">
-        <widget class="QDoubleSpinBox" name="doubleSpinBox_5">
+       <item row="0" column="1">
+        <widget class="QDateTimeEdit" name="dateTimeEdit">
+         <property name="font">
+          <font>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="minimumDate">
+          <date>
+           <year>2020</year>
+           <month>9</month>
+           <day>1</day>
+          </date>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
          <property name="font">
           <font>
            <bold>false</bold>
           </font>
          </property>
          <property name="maximum">
-          <double>999999.989999999990687</double>
+          <double>9999.989999999999782</double>
          </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="label_10">
-         <property name="font">
-          <font>
-           <bold>false</bold>
-          </font>
+         <property name="value">
+          <double>2000.000000000000000</double>
          </property>
-         <property name="text">
-          <string>Win/Loss/Breakeven</string>
-         </property>
-         <property name="buddy">
-          <cstring>comboBox_4</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QComboBox" name="comboBox_4">
-         <property name="font">
-          <font>
-           <bold>false</bold>
-          </font>
-         </property>
-         <item>
-          <property name="text">
-           <string>Win</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Loss</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Breakeven</string>
-          </property>
-         </item>
         </widget>
        </item>
       </layout>
@@ -713,13 +688,13 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionLink_Excel_Doc"/>
     <addaction name="actionClose"/>
    </widget>
    <widget class="QMenu" name="menuHelo">
     <property name="title">
      <string>Edit</string>
     </property>
+    <addaction name="actionInsert_Strategies"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -739,6 +714,11 @@
   <action name="actionLink_Excel_Doc">
    <property name="text">
     <string>Link Excel Doc</string>
+   </property>
+  </action>
+  <action name="actionInsert_Strategies">
+   <property name="text">
+    <string>Insert Strategies</string>
    </property>
   </action>
  </widget>
