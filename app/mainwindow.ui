@@ -38,8 +38,8 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QFormLayout" name="formLayout_3">
-    <item row="0" column="0" colspan="2">
+   <layout class="QGridLayout" name="gridLayout_5">
+    <item row="0" column="0">
      <widget class="QGroupBox" name="groupBox">
       <property name="font">
        <font>
@@ -77,11 +77,9 @@
              <bold>false</bold>
             </font>
            </property>
-           <item>
-            <property name="text">
-             <string>Select</string>
-            </property>
-           </item>
+           <property name="placeholderText">
+            <string>Select</string>
+           </property>
           </widget>
          </item>
         </layout>
@@ -106,28 +104,37 @@
        <string>Strategy Check List</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="4" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
          <property name="spacing">
-          <number>186</number>
+          <number>108</number>
          </property>
          <item>
-          <widget class="QCheckBox" name="checkBox_4">
+          <widget class="QLabel" name="label_2">
            <property name="font">
             <font>
              <bold>false</bold>
             </font>
            </property>
            <property name="text">
-            <string>4</string>
+            <string>Strategy Information</string>
+           </property>
+           <property name="buddy">
+            <cstring>textEdit</cstring>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPlainTextEdit" name="plainTextEdit_4">
+          <widget class="QTextEdit" name="textEdit">
            <property name="minimumSize">
             <size>
              <width>300</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="baseSize">
+            <size>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -188,37 +195,28 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
          <property name="spacing">
-          <number>108</number>
+          <number>186</number>
          </property>
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QCheckBox" name="checkBox_2">
            <property name="font">
             <font>
              <bold>false</bold>
             </font>
            </property>
            <property name="text">
-            <string>Strategy Information</string>
-           </property>
-           <property name="buddy">
-            <cstring>textEdit</cstring>
+            <string>2</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QTextEdit" name="textEdit">
+          <widget class="QPlainTextEdit" name="plainTextEdit_2">
            <property name="minimumSize">
             <size>
              <width>300</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="baseSize">
-            <size>
-             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -261,25 +259,25 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item row="4" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
          <property name="spacing">
           <number>186</number>
          </property>
          <item>
-          <widget class="QCheckBox" name="checkBox_2">
+          <widget class="QCheckBox" name="checkBox_4">
            <property name="font">
             <font>
              <bold>false</bold>
             </font>
            </property>
            <property name="text">
-            <string>2</string>
+            <string>4</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPlainTextEdit" name="plainTextEdit_2">
+          <widget class="QPlainTextEdit" name="plainTextEdit_4">
            <property name="minimumSize">
             <size>
              <width>300</width>
@@ -296,7 +294,7 @@
       </layout>
      </widget>
     </item>
-    <item row="2" column="0" colspan="2">
+    <item row="2" column="0">
      <widget class="QGroupBox" name="groupBox_3">
       <property name="font">
        <font>
@@ -599,7 +597,7 @@
       </layout>
      </widget>
     </item>
-    <item row="3" column="0" colspan="2">
+    <item row="3" column="0">
      <widget class="QGroupBox" name="groupBox_4">
       <property name="font">
        <font>
@@ -695,6 +693,7 @@
      <string>Edit</string>
     </property>
     <addaction name="actionInsert_Strategies"/>
+    <addaction name="actionRemove_Strategy"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -719,6 +718,11 @@
   <action name="actionInsert_Strategies">
    <property name="text">
     <string>Insert Strategies</string>
+   </property>
+  </action>
+  <action name="actionRemove_Strategy">
+   <property name="text">
+    <string>Remove Strategy</string>
    </property>
   </action>
  </widget>

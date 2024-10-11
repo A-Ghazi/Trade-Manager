@@ -1,17 +1,12 @@
-
-from ast import arg
-from math import comb
-from tkinter import E
-from tkinter.messagebox import OKCANCEL
-from tkinter.ttk import Combobox
-from turtle import title
-from click import style
 import sys, json, requests
 import pandas as pd
 from PyQt6 import QtWidgets, QtGui, QtCore, uic
 from PyQt6.QtWidgets import QMessageBox
-from mainwindow_ui import Ui_MainWindow  # Import the generated UI class
+from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtWidgets import QDialog
+from mainwindow_ui import Ui_MainWindow# Import the generated UI class
 from dialog_ui import Ui_Dialog
+from removeStrategyDialog_ui import Ui_DialogRemoveStrategy
 
 # class that inherits from QMainWindow and the generated UI class
 class MainWindow(QtWidgets.QMainWindow):
@@ -27,6 +22,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Connecting the Combobox to manipulate the strategy information text boxes.
         self.ui.comboBox.currentIndexChanged.connect(self.update_text_fields)
         self.ui.actionInsert_Strategies.triggered.connect(self.open_dialog)
+        self.ui.actionRemove_Strategy.triggered.connect(self.open_Remove_Strategy)
         self.ui.selectFile.clicked.connect(self.get_file_path)
         self.ui.exportData.clicked.connect(self.submit)
         self.ui.clearForm.clicked.connect(self.clear_form)
@@ -41,7 +37,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.export_data_btn = self.ui.exportData
         self.strategy_name = self.ui.comboBox
         self.strategy_info = self.ui.textEdit
-        self.step1 = self.ui.plainTextEdit
+        self.step1 = self.ui.textEdit
         self.step2 = self.ui.plainTextEdit_2
         self.step3 = self.ui.plainTextEdit_3
         self.step4 = self.ui.plainTextEdit_4
@@ -55,17 +51,38 @@ class MainWindow(QtWidgets.QMainWindow):
         self.p_l = self.ui.doubleSpinBox_5
         self.win_loss = self.ui.comboBox_4
 
-        # A dictionary to store stratgy data
+        # A dictionary to store strategy data
         self.combo_data = {}
 
-        
+   
+
+    def open_Remove_Strategy(self):
+    # Pass the comboBox and combo_data references to RemoveStrategyWindow
+        dialog_Remove = RemoveStrategyWindow(
+            parent=self, 
+            combo_box=self.ui.comboBox, 
+            combo_data=self.combo_data
+    )
+        dialog_Remove.dialog_submitted_Strategy.connect(self.remove_strategy_option)
+        dialog_Remove.exec()
+
+    
     # Fucntion which will open up the strategy input dialog window
     def open_dialog(self):
         dialog = DialogWindow(self)
         dialog.dialog_submitted.connect(self.add_combo_option)
         dialog.exec()
 
+    def remove_strategy_option(self, combo_option_to_remove, text_data_to_remove):
+        
+        del self.combo_data[combo_option_to_remove]
+        self.update_text_fields()
+        
+
+
+        
     # 
+
     def add_combo_option(self, combo_option, text_data):
         #Take the combo_option name received from Dialog window and to QComboBox 
         self.ui.comboBox.addItem(combo_option)
@@ -92,7 +109,6 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.plainTextEdit_3.clear()
             self.ui.plainTextEdit_4.clear()
         
-
     # Open a file dialog to get the path of an excel file
     def get_file_path(self):
         # Open a folder dialog and get the selected path
@@ -156,8 +172,8 @@ class MainWindow(QtWidgets.QMainWindow):
     # Method to clear the form fields
     def clear_form(self):
         
-        self.strategy_name.setCurrentIndex(0)
-        self.step1.setPlainText("")
+        self.strategy_name.setCurrentIndex(-1)
+        self.step1.setText("")
         self.step2.setPlainText("")
         self.step3.setPlainText("")
         self.step4.setPlainText("")
@@ -212,11 +228,12 @@ class DialogWindow(QtWidgets.QDialog):
         super(DialogWindow, self).__init__(parent)
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
+        self.setWindowTitle("Strategy Setup")
         
         # Connect Dialog Buttons
         self.ui.buttonBox.accepted.connect(self.load_strategy_data)
         # Initialise UI elements
-   
+        
 
     def load_strategy_data(self):
         
@@ -231,9 +248,49 @@ class DialogWindow(QtWidgets.QDialog):
         ]
 
         self.dialog_submitted.emit(combo_option, text_data)
+        
+        self.accept()
+        
+
+class RemoveStrategyWindow(QtWidgets.QDialog):
+    dialog_submitted_Strategy = QtCore.pyqtSignal(str, list)
+
+    def __init__(self, parent=None, combo_box=None, combo_data=None):
+        super(RemoveStrategyWindow, self).__init__(parent)
+        self.ui = Ui_DialogRemoveStrategy()
+        self.ui.setupUi(self)
+        self.setWindowTitle("Remove Strategy")
+
+        # Store references to the passed combo box and combo data
+        self.main_combo_box = combo_box
+        self.main_combo_data = combo_data
+
+        # Populate the RemoveStrategyWindow's comboBox with items from MainWindow's comboBox
+        self.populate_combo_box()
+
+        # Connect the remove strategy method
+        self.ui.buttonBox.accepted.connect(self.remove_strategy)
+
+    def populate_combo_box(self):
+        # Ensure the combo box is cleared before populating
+        self.ui.comboBoxRemove.clear()
+
+        if self.main_combo_box:
+            # Populate the comboBoxRemove with items from MainWindow's comboBox
+            for i in range(self.main_combo_box.count()):
+                item_text = self.main_combo_box.itemText(i)
+                self.ui.comboBoxRemove.addItem(item_text)
+
+    def remove_strategy(self):
+        selected_strategy = self.ui.comboBoxRemove.currentText()
+        if selected_strategy in self.main_combo_data:
+            # Emit signal with the strategy to remove
+            self.dialog_submitted_Strategy.emit(selected_strategy, self.main_combo_data[selected_strategy])
+        
         self.accept()
 
-# Entry point of the application
+
+        # Entry point of the application
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # Create the application object
 
