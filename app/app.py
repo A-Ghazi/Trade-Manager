@@ -1,4 +1,5 @@
 import sys, json, requests
+from unittest import result
 import pandas as pd
 from PyQt6 import QtWidgets, QtGui, QtCore, uic
 from PyQt6.QtWidgets import QMessageBox
@@ -6,7 +7,8 @@ from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QDialog
 from mainwindow_ui import Ui_MainWindow# Import the generated UI class
 from dialog_ui import Ui_Dialog
-from removeStrategyDialog_ui import Ui_DialogRemoveStrategy
+
+
 
 # class that inherits from QMainWindow and the generated UI class
 class MainWindow(QtWidgets.QMainWindow):
@@ -22,7 +24,7 @@ class MainWindow(QtWidgets.QMainWindow):
         # Connecting the Combobox to manipulate the strategy information text boxes.
         self.ui.comboBox.currentIndexChanged.connect(self.update_text_fields)
         self.ui.actionInsert_Strategies.triggered.connect(self.open_dialog)
-        self.ui.actionRemove_Strategy.triggered.connect(self.open_Remove_Strategy)
+        self.ui.removeStrategy.clicked.connect(self.removeStrategy)
         self.ui.selectFile.clicked.connect(self.get_file_path)
         self.ui.exportData.clicked.connect(self.submit)
         self.ui.clearForm.clicked.connect(self.clear_form)
@@ -30,6 +32,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.dateTimeEdit.setDisplayFormat("dd/MM/yyyy hh:mm:ss")
         self.ui.clearForm.clicked.connect(self.clear_form)
         self.ui.lineEdit.setProperty("mandatoryField", True)
+        
 
         # Initialise UI elements from MainWindow
         self.target_file_path = self.ui.lineEdit
@@ -55,33 +58,35 @@ class MainWindow(QtWidgets.QMainWindow):
         self.combo_data = {}
 
    
+    def removeStrategy(self):
+        current_strategy = self.ui.comboBox.currentIndex()
+        current_strategy_name = self.ui.comboBox.currentText()
 
-    def open_Remove_Strategy(self):
-    # Pass the comboBox and combo_data references to RemoveStrategyWindow
-        dialog_Remove = RemoveStrategyWindow(
-            parent=self, 
-            combo_box=self.ui.comboBox, 
-            combo_data=self.combo_data
-    )
-        dialog_Remove.dialog_submitted_Strategy.connect(self.remove_strategy_option)
-        dialog_Remove.exec()
+        if current_strategy == -1:
+            self.error_no_selected_strategy()
+        
+        
+        else:
+            reply = QMessageBox()
+            reply.setWindowTitle("Attention")
+            reply.setIcon(QMessageBox.Icon.Critical)
+            reply.setText("Are you sure you want to remove this strategy")
+            reply.setStandardButtons(QMessageBox.StandardButton.Yes | 
+                     QMessageBox.StandardButton.No)
 
-    
+            x = reply.exec()
+
+            if x == QMessageBox.StandardButton.Yes:
+                           
+                self.ui.comboBox.removeItem(current_strategy)
+                del self.combo_data[current_strategy_name]
+            
     # Fucntion which will open up the strategy input dialog window
     def open_dialog(self):
         dialog = DialogWindow(self)
         dialog.dialog_submitted.connect(self.add_combo_option)
         dialog.exec()
-
-    def remove_strategy_option(self, combo_option_to_remove, text_data_to_remove):
-        
-        del self.combo_data[combo_option_to_remove]
-        self.update_text_fields()
-        
-
-
-        
-    # 
+      
 
     def add_combo_option(self, combo_option, text_data):
         #Take the combo_option name received from Dialog window and to QComboBox 
@@ -92,6 +97,7 @@ class MainWindow(QtWidgets.QMainWindow):
     # Updating stratgey fields based on combobox selection
     def update_text_fields(self):
 
+       
         current_option = self.ui.comboBox.currentText()
 
         if current_option in self.combo_data:
@@ -216,9 +222,13 @@ class MainWindow(QtWidgets.QMainWindow):
 
     # Message window appearing when export is complete
     def export_complete_message(self):
-
+        
         QMessageBox.information(self, "Export Complete", "Data has been exported to target file.")
+    
+    def error_no_selected_strategy(self):
+        QMessageBox.information(self, "No Strategy selected", "Select a valid strategy to delete.")
 
+    
 # Class for dialog
 class DialogWindow(QtWidgets.QDialog):
 
@@ -251,45 +261,6 @@ class DialogWindow(QtWidgets.QDialog):
         
         self.accept()
         
-
-class RemoveStrategyWindow(QtWidgets.QDialog):
-    dialog_submitted_Strategy = QtCore.pyqtSignal(str, list)
-
-    def __init__(self, parent=None, combo_box=None, combo_data=None):
-        super(RemoveStrategyWindow, self).__init__(parent)
-        self.ui = Ui_DialogRemoveStrategy()
-        self.ui.setupUi(self)
-        self.setWindowTitle("Remove Strategy")
-
-        # Store references to the passed combo box and combo data
-        self.main_combo_box = combo_box
-        self.main_combo_data = combo_data
-
-        # Populate the RemoveStrategyWindow's comboBox with items from MainWindow's comboBox
-        self.populate_combo_box()
-
-        # Connect the remove strategy method
-        self.ui.buttonBox.accepted.connect(self.remove_strategy)
-
-    def populate_combo_box(self):
-        # Ensure the combo box is cleared before populating
-        self.ui.comboBoxRemove.clear()
-
-        if self.main_combo_box:
-            # Populate the comboBoxRemove with items from MainWindow's comboBox
-            for i in range(self.main_combo_box.count()):
-                item_text = self.main_combo_box.itemText(i)
-                self.ui.comboBoxRemove.addItem(item_text)
-
-    def remove_strategy(self):
-        selected_strategy = self.ui.comboBoxRemove.currentText()
-        if selected_strategy in self.main_combo_data:
-            # Emit signal with the strategy to remove
-            self.dialog_submitted_Strategy.emit(selected_strategy, self.main_combo_data[selected_strategy])
-        
-        self.accept()
-
-
         # Entry point of the application
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # Create the application object
