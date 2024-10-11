@@ -296,7 +296,7 @@ class DialogWindow(QtWidgets.QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
         self.setWindowTitle("Strategy Setup")
-        
+        self.setWindowIcon(QtGui.QIcon("assets\input.png"))
         # Connect Dialog Buttons
         self.ui.buttonBox.accepted.connect(self.load_strategy_data)
         # Initialise UI elements
