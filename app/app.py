@@ -4,9 +4,10 @@ import pandas as pd
 from PyQt6 import QtWidgets, QtGui, QtCore, uic
 from PyQt6.QtWidgets import QMessageBox
 from PyQt6.QtCore import pyqtSignal
-from PyQt6.QtWidgets import QDialog
+from PyQt6.QtWidgets import QDialog, QFileDialog
 from mainwindow_ui import Ui_MainWindow# Import the generated UI class
 from dialog_ui import Ui_Dialog
+
 
 
 
@@ -20,10 +21,12 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()  # Create an instance of the UI class
         self.ui.setupUi(self)  # Set up the UI in the main window
         self.setWindowTitle("Trade Manager")
+        self.setWindowIcon(QtGui.QIcon("assets\stock-market.png"))
 
         # Connecting the Combobox to manipulate the strategy information text boxes.
         self.ui.comboBox.currentIndexChanged.connect(self.update_text_fields)
         self.ui.actionInsert_Strategies.triggered.connect(self.open_dialog)
+        self.ui.actionRemove_Strategy.triggered.connect(self.removeStrategy)
         self.ui.removeStrategy.clicked.connect(self.removeStrategy)
         self.ui.selectFile.clicked.connect(self.get_file_path)
         self.ui.exportData.clicked.connect(self.submit)
@@ -32,6 +35,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.dateTimeEdit.setDisplayFormat("dd/MM/yyyy hh:mm:ss")
         self.ui.clearForm.clicked.connect(self.clear_form)
         self.ui.lineEdit.setProperty("mandatoryField", True)
+        self.ui.actionSave.triggered.connect(self.save_combo_data)
+        self.ui.actionLoad.triggered.connect(self.load_combo_data)
+        self.ui.actionClose.triggered.connect(self.close_Application)
+        
         
 
         # Initialise UI elements from MainWindow
@@ -57,7 +64,53 @@ class MainWindow(QtWidgets.QMainWindow):
         # A dictionary to store strategy data
         self.combo_data = {}
 
-   
+
+    # Function which allows the user to save data to a selected file path
+    def save_combo_data(self):
+        
+        file_path, _ = QFileDialog.getSaveFileName(self, "Save File", "", "JSON Files (*.json)")
+        if file_path:
+            self.save_data(file_path, self.combo_data)
+
+    # Packs the data passed from def save_combo_data function and saves it into a json file at target file path
+    def save_data(self, file_path, combo_data):
+    
+        try:
+            with open(file_path, 'w') as file:
+                json.dump(combo_data, file, indent=4)  # Save with formatting for readability
+                self.save_data_complete(file_path)
+        except Exception as e:
+            print(f"Failed to save data: {e}")
+
+    # Function to open load dialog window to allow users to load their data
+    def load_combo_data(self):
+        # Open a dialog to choose which file to load
+        file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "JSON Files (*.json)")
+        if file_path:
+            global combo_data
+            combo_data = self.load_data(file_path)  # Load the data into the combo_data dictionary
+            self.combo_data = combo_data
+            self.unpack_loaded_data(combo_data)
+                   
+    # Takes in the data from json file and returns combo_data to be unpacked later
+    def load_data(self, file_path):
+        try:
+            with open(file_path, 'r') as file:
+                combo_data = json.load(file)
+                print(f"Data loaded from {file_path}")
+
+                return combo_data
+        except Exception as e:
+            print(f"Failed to load data: {e}")
+            return {}
+    
+    # Function to unpack json data into the combo_data dictionary
+    def unpack_loaded_data(self, combo_data):
+        
+        combo_names = combo_data
+        self.ui.comboBox.addItems(combo_names)
+
+    # Function to remove selected strategy
     def removeStrategy(self):
         current_strategy = self.ui.comboBox.currentIndex()
         current_strategy_name = self.ui.comboBox.currentText()
@@ -80,14 +133,14 @@ class MainWindow(QtWidgets.QMainWindow):
                            
                 self.ui.comboBox.removeItem(current_strategy)
                 del self.combo_data[current_strategy_name]
-            
+        
     # Fucntion which will open up the strategy input dialog window
     def open_dialog(self):
         dialog = DialogWindow(self)
         dialog.dialog_submitted.connect(self.add_combo_option)
         dialog.exec()
       
-
+    # Function which will add strategies to comboBox
     def add_combo_option(self, combo_option, text_data):
         #Take the combo_option name received from Dialog window and to QComboBox 
         self.ui.comboBox.addItem(combo_option)
@@ -225,10 +278,18 @@ class MainWindow(QtWidgets.QMainWindow):
         
         QMessageBox.information(self, "Export Complete", "Data has been exported to target file.")
     
+    # Error shown when no strategy is selected whilst trying to remove it
     def error_no_selected_strategy(self):
         QMessageBox.information(self, "No Strategy selected", "Select a valid strategy to delete.")
 
-    
+    # User message when save data action is complete
+    def save_data_complete(self, file_path):
+        QMessageBox.information(self, f"Save Complete", f"File has been saved successfuly to: {file_path}")
+
+    # Links the Close QAction in file dropdown menu to close application
+    def close_Application(self):
+        sys.exit()
+
 # Class for dialog
 class DialogWindow(QtWidgets.QDialog):
 
@@ -261,7 +322,9 @@ class DialogWindow(QtWidgets.QDialog):
         
         self.accept()
         
-        # Entry point of the application
+
+
+# Entry point of the application
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)  # Create the application object
 
