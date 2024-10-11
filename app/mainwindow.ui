@@ -60,7 +60,7 @@
             </font>
            </property>
            <property name="text">
-            <string>Select Strategy</string>
+            <string>Select Strategy           </string>
            </property>
            <property name="buddy">
             <cstring>comboBox</cstring>

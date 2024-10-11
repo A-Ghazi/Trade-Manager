@@ -356,7 +356,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.groupBox.setTitle(_translate("MainWindow", "Strategy Selector"))
-        self.label.setText(_translate("MainWindow", "Select Strategy"))
+        self.label.setText(_translate("MainWindow", "Select Strategy           "))
         self.comboBox.setPlaceholderText(_translate("MainWindow", "Select"))
         self.removeStrategy.setText(_translate("MainWindow", "Remove Current Strategy"))
         self.groupBox_4.setTitle(_translate("MainWindow", "Target Excel File"))
