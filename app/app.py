@@ -210,10 +210,6 @@ class MainWindow(QtWidgets.QMainWindow):
         data = {
             "Strategy Name": strategy_name,
             "Strategy Informatio": strategy_info,
-            "Strategy Step 1": step_1,
-            "Strategy Step 2": step_2,
-            "Strategy Step 3": step_3,
-            "Strategy Step 4": step_4,
             "Date & Time": date_time_string,
             "Symbol": symbol,
             "Long/Short": long_short,
